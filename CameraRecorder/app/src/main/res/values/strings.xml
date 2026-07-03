@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Camera Recorder</string>
+    <string name="camera_permission_required">Camera permission is required to use this app</string>
+    <string name="audio_permission_required">Audio permission is required for video recording</string>
+    <string name="recording_started">Recording started</string>
+    <string name="recording_stopped">Recording saved</string>
+    <string name="recording_error">Recording failed</string>
+</resources>

@@ -1,0 +1,14 @@
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="bg_dark">#FF121212</color>
+    <color name="surface_dark">#FF1E1E1E</color>
+    <color name="accent_red">#FFEF4444</color>
+    <color name="accent_red_dark">#FFDC2626</color>
+    <color name="recording_pulse">#CCEF4444</color>
+    <color name="control_bg">#80000000</color>
+    <color name="control_bg_hover">#B3000000</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="timer_bg">#99000000</color>
+</resources>
