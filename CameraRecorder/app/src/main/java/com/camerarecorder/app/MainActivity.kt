@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity() {
      * HOW: Uses Google's CameraX library which handles all the
      *      complex camera hardware stuff for us
      */
+    @androidx.annotation.OptIn(androidx.camera.camera2.interop.ExperimentalCamera2Interop::class)
     private fun startCamera() {
         // Get the camera provider (CameraX manages camera access for us)
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
