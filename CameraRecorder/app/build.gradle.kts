@@ -32,6 +32,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += listOf("-opt-in=androidx.camera.camera2.interop.ExperimentalCamera2Interop")
     }
 
     buildFeatures {
