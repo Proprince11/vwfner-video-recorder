@@ -7,6 +7,9 @@
     <!-- AUDIO permission: needed to record sound with video -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!-- STORAGE permission: needed for saving videos on Android 9 (API 28) and below -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
     <!-- Tell the Play Store this app needs a camera -->
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />

@@ -5,16 +5,20 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.hardware.camera2.CaptureRequest
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Range
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.camera2.interop.Camera2CameraControl
+import androidx.camera.camera2.interop.CaptureRequestOptions
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -123,6 +127,14 @@ class MainActivity : AppCompatActivity() {
         dotAnimator?.cancel()
     }
 
+    override fun onPause() {
+        super.onPause()
+        // Stop recording if the app is backgrounded to prevent "ghost recording"
+        if (isRecording) {
+            stopRecording()
+        }
+    }
+
     // ─── CAMERA SETUP ──────────────────────────────────────────
     /**
      * WHAT: Initializes the camera and connects it to the preview on screen
@@ -148,7 +160,7 @@ class MainActivity : AppCompatActivity() {
             // === VIDEO CAPTURE: Handles recording video ===
             val recorder = Recorder.Builder()
                 .setQualitySelector(
-                    QualitySelector.from(Quality.HIGHEST)  // Record at best quality
+                    QualitySelector.from(Quality.FHD)  // Force 1080p
                 )
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
@@ -163,12 +175,23 @@ class MainActivity : AppCompatActivity() {
                 cameraProvider.unbindAll()
 
                 // Connect everything: preview + video capture to the chosen camera
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                     this,           // Lifecycle owner (this activity)
                     cameraSelector, // Which camera to use
                     preview,        // Show preview on screen
                     videoCapture    // Enable video recording
                 )
+
+                // Try to force 60 FPS using Camera2Interop
+                try {
+                    val camera2CameraControl = Camera2CameraControl.from(camera.cameraControl)
+                    val options = CaptureRequestOptions.Builder()
+                        .setCaptureRequestOption(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(60, 60))
+                        .build()
+                    camera2CameraControl.setCaptureRequestOptions(options)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Could not force 60 FPS: ${e.message}")
+                }
 
                 Log.d(TAG, "Camera started successfully")
             } catch (e: Exception) {
@@ -453,6 +476,11 @@ class MainActivity : AppCompatActivity() {
         private val REQUIRED_PERMISSIONS = mutableListOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
-        ).toTypedArray()
+        ).apply {
+            // Need storage permission on Android 9 and below
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }.toTypedArray()
     }
 }
